@@ -3,3 +3,12 @@ version: "3.9"
 services:
   echo:
     image: ghcr.io/gihyodocker/echo:v0.1.0
+    
+  nginx:
+    build: ./nginx
+    # コンテナ間通信のために依存を記述
+    # このnginxからechoへのコンテナ間通信が可能になる
+    depends_on:
+      - echo
+    ports:
+      - "9000:80"

@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: echo
+  labels:
+    app: echo
+spec:
+  replicas: 3
+  selector: # ここでpod定義につけたlabelで指定できる
+    matchLabels:
+      app: echo
+  template: # template以下はpod定義
+    metadata:
+      labels:
+        app: echo
+    spec:
+      containers:
+      - name: nginx
+        image: ghcr.io/gihyodocker/simple-nginx-proxy:v0.1.0
+        env:
+        - name: NGINX_PORT
+          value: "80"
+        - name: SERVER_NAME
+          value: "localhost"
+        - name: BACKEND_HOST
+          value: "localhost:8080"
+        - name: BACKEND_MAX_FAILS
+          value: "3"
+        - name: BACKEND_FAIL_TIMEOUT
+          value: "10s"
+        ports:
+        - containerPort: 80
+      - name: echo
+        image: ghcr.io/gihyodocker/echo:v0.1.0
+        ports:
+        - containerPort: 8080
+# spec.template.spec配下には基本的にpod定義を書く(別マニフェストから読み込むとかはしない)
+# ただし、下のようにもできるらしい
+
+# # アンカーを使用して定義を作成
+# definitions: &podTemplate
+#   containers:
+#     - name: my-container
+#       image: nginx
+#
+# # ReplicaSetで定義を再利用
+# apiVersion: apps/v1
+# kind: ReplicaSet
+# metadata:
+#   name: my-replicaset
+# spec:
+#   replicas: 3
+#   selector:
+#     matchLabels:
+#       app: my-app
+#   template:
+#     metadata:
+#       labels:
+#         app: my-app
+#     spec: *podTemplate

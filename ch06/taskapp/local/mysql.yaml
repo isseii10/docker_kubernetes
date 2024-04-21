@@ -10,6 +10,8 @@ spec:
   selector:
     matchLabels:
       app: mysql # has to match .spec.template.metadata.labels
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
   serviceName: "mysql"
   replicas: 1 # by default is 1
   template:

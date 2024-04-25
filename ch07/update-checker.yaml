@@ -1,0 +1,23 @@
+# https://kubernetes.io/docs/concepts/workloads/pods/
+apiVersion: v1
+kind: Pod
+metadata:
+  name: update-checker
+  namespace: default
+  labels:
+    app: update-checker
+spec:
+  containers:
+    - name: update-checker
+      image: ghcr.io/gihyodocker/debug:v0.1.0
+      command:
+        - sh
+        - -c
+        - |
+          while true
+          do
+            VERSION=`curl -s http://print-version/`
+            echo "[`date`] $VERSION"
+            sleep 1
+          done
+---
